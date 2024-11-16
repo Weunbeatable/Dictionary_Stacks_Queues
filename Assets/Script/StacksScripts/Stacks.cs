@@ -25,6 +25,7 @@ public class Stacks : MonoBehaviour
 
     public void addObjectsToStack()
     {
+        //LIFO last in first out
         if (objectStack.Count > 5)
         {
             Debug.Log("Reached the upper limit of the stack for this example");
