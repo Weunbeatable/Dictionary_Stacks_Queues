@@ -8,27 +8,42 @@ public class QueueSolutionUsingQueues : MonoBehaviour
     // INstantiate an object
     // Have some buttons that will run some general commands. 
     // Start is called before the first frame update
-    [SerializeField] public GameObject object_to_stack;
+    //Queues
+    //FUnctions involving queues are
+    // Enqueue: - adds an object to a queue
+    // Dequeue: - removes an object from the queue
+    // Clear : - clear the queue
+    // contains: - checks if a queue has a value. 
+    // Peek:  - checks to item at the top of the queue. 
+
+    // Some objects that we want to generate. 
+    [SerializeField] public GameObject object_to_add_to_queue;
+
+    // we want to keep track of their positions, so lets use a variable to do that. 
     public Transform pos_of_Top_Stack_item;
-    public Stack<GameObject> objectQueue = new Stack<GameObject>();
+    // Create a queue object, the type for this example is GameObject
+    public Queue<GameObject> objectQueue = new Queue<GameObject>();
     void Start()
     {
-
-        pos_of_Top_Stack_item.position = new Vector3(0f, 5.5f, 0f);
+        // grabbed the inital position. 
+        pos_of_Top_Stack_item.position = new Vector3(4f, 0.5f, 0f);
     }
 
 
     public void Enqueue()
     {
         // FIFO -first in first out
+        // Upper limit of this queue will be 5 items. 
         if (objectQueue.Count > 5)
         {
             Debug.Log("Reached the upper limit of the stack for this example");
-            return;
+            return; // do nothing if we try to add more than 5 objects. 
         }
 
-        // add a new object
-        objectQueue.Push(Instantiate(object_to_stack, pos_of_Top_Stack_item.position, Quaternion.identity)); // add object to stack
+        // We want to add an object to our queue. 
+
+       objectQueue.Enqueue(Instantiate(object_to_add_to_queue, pos_of_Top_Stack_item.position, Quaternion.identity));
+
         string randomIDGenerator = "";
         // need to generate random value to select random char.
         System.Random newRand = new System.Random();
@@ -42,50 +57,41 @@ public class QueueSolutionUsingQueues : MonoBehaviour
             randomIDGenerator = randomIDGenerator + letter; // concatonate string together.
 
         }
-        objectQueue.Peek().name = randomIDGenerator; // new ID for object. 
-        Debug.Log("Newly added objects name is " + object_to_stack.name);
-        objectQueue.Peek().GetComponent<MeshRenderer>().material.color = new Color(
+        object_to_add_to_queue.name = randomIDGenerator; // new ID for object. 
+        Debug.Log("Newly added objects name is " + object_to_add_to_queue.name);
+
+       /* object_to_add_to_queue.GetComponent<MeshRenderer>().material.color = new Color(
                 UnityEngine.Random.Range(0f, 1f),
                 UnityEngine.Random.Range(0f, 1f),
                 UnityEngine.Random.Range(0f, 1f),
-                1f); // declare a object with a new color. leave alpha unchanged. 
+                1f);*/ // declare a object with a new color. leave alpha unchanged. 
 
+        pos_of_Top_Stack_item.position = pos_of_Top_Stack_item.position + new Vector3(-1.5f, 0f, 0f); // we modify the next starting position 
+        // each time we add an object to our queue. 
 
-        pos_of_Top_Stack_item.position = pos_of_Top_Stack_item.position + new Vector3(0f, -1f, 0f); // increase the y position for the next stacked item
-
-
-    }
-
-    public void PeekObject()
-    {
-
-        Debug.Log("The object you are looking at ID's " + objectQueue.Peek()); // name of object that is at top of stack. 
-        Debug.Log("Size of stack is " + objectQueue.Count); // state size of the stack after peeking just for verification 
     }
 
     public void Dequeue()
     {
-        objectQueue.Peek().SetActive(false);
-        Destroy(objectQueue.Peek()); // remove from top pos position. 
-        objectQueue.Pop();
-
-
-
-
-
-        pos_of_Top_Stack_item.position = pos_of_Top_Stack_item.position + new Vector3(0f, +1f, 0f); // update position as well
-        Debug.Log(objectQueue.Count); // logged new value along with visual 
+        if (objectQueue.Count <= 0  ) { return; } // if not empty don't do anything 
+        else
+        {
+            Destroy(objectQueue.Dequeue());
+            pos_of_Top_Stack_item.position = pos_of_Top_Stack_item.position + new Vector3(1.5f, 0f, 0f);
+        }
     }
 
     public void ClearQueue()
     {
-        foreach (GameObject objectInStack in objectQueue)
+        if (objectQueue.Count <= 0) { return; }
+        else
         {
-            Destroy(objectInStack);
+            objectQueue.Clear();
+            foreach (GameObject item in objectQueue)
+            {
+                Destroy(item);
+            }
 
-        }  // remove all objects from stack
-        objectQueue.Clear();
-        pos_of_Top_Stack_item.position = new Vector3(0f, 5.5f, 0f);// reset position 
-        //Debug.Log(objectQueue.Count);
+        }
     }
 }
